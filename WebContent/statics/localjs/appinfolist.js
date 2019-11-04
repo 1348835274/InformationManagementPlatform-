@@ -90,6 +90,8 @@ $(".modifyVersion").on(
 						+ "】,不能修改其版本信息，只可进行【新增版本】操作！");
 			}
 		});
+
+//修改基本信息
 $(".modifyAppInfo").on("click", function() {
 	var obj = $(this);
 	var status = obj.attr("status");

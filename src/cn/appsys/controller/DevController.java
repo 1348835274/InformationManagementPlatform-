@@ -84,4 +84,12 @@ public class DevController {
 		}
 		return count;
 	}
+
+	// 进入修改基本信息页面
+	@RequestMapping(value = "appinfomodify", method = RequestMethod.GET)
+	public String appinfomodifys() {
+		//展示数据
+		
+		return "developer/appinfomodify";
+	}
 }

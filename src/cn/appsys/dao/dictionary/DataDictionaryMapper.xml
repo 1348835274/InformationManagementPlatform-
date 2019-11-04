@@ -31,10 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	<!-- 映射文件 -->
 	<resultMap type="appInfo" id="appInfoList">
-		<result property="softwareName" column="softwareName" />
-		<result property="APKName" column="APKName" />
-		<result property="softwareSize" column="softwareSize" />
-		<result property="downloads" column="downloads" />
+		<id property="id" column="a.id" />
 		<result property="categoryLevel3Name" column="categoryName3" />
 		<result property="categoryLevel2Name" column="categoryName2" />
 		<result property="categoryLevel1Name" column="categoryName1" />
@@ -44,11 +41,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	<!-- 分页并且模糊查询信息 -->
 	<select id="selectAll" resultMap="appInfoList">
-		select
+		select a.id ,a.*,
 		a.softwareName ,
 		a.APKName ,
 		a.softwareSize,
-		(select valueName from
+		(select
+		valueName from
 		data_dictionary where typeCode='APP_FLATFORM' and
 		valueId=a.flatformId) as valueName,
 		(select categoryName from
