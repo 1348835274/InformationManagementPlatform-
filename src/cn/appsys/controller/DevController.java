@@ -66,14 +66,18 @@ public class DevController {
 		return "developer/appinfolist";
 	}
 
-	// 显示二级菜单
-	@RequestMapping(value = "aaa", method = RequestMethod.GET, produces = { "application/json;charset=UTF-8" })
+	// 显示级别菜单
+	@RequestMapping(value = "fy", method = RequestMethod.GET, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 	public Object view(@RequestParam(value = "pid") String pid) {
 		String count = "";
 		List<AppCategory> list = null;
 		try {
-			list = dataDictionaryServiceimpl.appCate23(pid);
+			if (null == pid) {
+				list = dataDictionaryServiceimpl.appCate23(pid);
+			} else {
+				list = dataDictionaryServiceimpl.appCate1();
+			}
 			count = JSON.toJSONString(list);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -4,7 +4,7 @@ $("#queryCategoryLevel1").change(
 			if (queryCategoryLevel1 != '' && queryCategoryLevel1 != null) {
 				$.ajax({
 					type : "GET",// 请求类型
-					url : "aaa",// 请求的url
+					url : "fy",// 请求的url
 					data : {
 						pid : queryCategoryLevel1
 					},// 请求参数
@@ -40,7 +40,7 @@ $("#queryCategoryLevel2").change(
 			if (queryCategoryLevel2 != '' && queryCategoryLevel2 != null) {
 				$.ajax({
 					type : "GET",// 请求类型
-					url : "aaa",// 请求的url
+					url : "fy",// 请求的url
 					data : {
 						pid : queryCategoryLevel2
 					},// 请求参数
