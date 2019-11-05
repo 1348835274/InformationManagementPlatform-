@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 
 import cn.appsys.pojo.AppCategory;
 import cn.appsys.pojo.AppInfo;
+import cn.appsys.pojo.AppVersion;
 import cn.appsys.pojo.BackendUser;
 import cn.appsys.pojo.DataDictionary;
 import cn.appsys.pojo.DevUser;
@@ -87,7 +88,7 @@ public class BackendController {
 	}
 
 	// 跳转到app审核
-	@RequestMapping(value = "/manager/backend/app/list", method = RequestMethod.GET)
+	@RequestMapping(value = "/manager/backend/app/list")
 	public String appinfolist(Model model,
 			@RequestParam(value = "querySoftwareName", required = false) String querySoftwareName,
 			@RequestParam(value = "queryFlatformId", required = false) String queryFlatformId,
@@ -143,4 +144,24 @@ public class BackendController {
 		return count;
 	}
 
+	// 跳转到修改界面
+	@RequestMapping(value = "check", method = RequestMethod.GET, produces = { "application/json;charset=UTF-8" })
+	public String check(Model model, @RequestParam(value = "aid") String aid, @RequestParam(value = "vid") String vid) {
+		AppInfo info = backendSerivceompl.selAppinfo(aid);
+		AppVersion sion = backendSerivceompl.alter(vid);
+		System.err.println(info.getDevName());
+		model.addAttribute("appInfo", info);
+		model.addAttribute("appVersion", sion);
+		return "backend/appcheck";
+	}
+
+	// 确定是否审核成
+	@RequestMapping(value = "checksave", method = RequestMethod.POST)
+	public String check(@RequestParam(value = "id") String id, @RequestParam(value = "status") String status) {
+		Boolean bool = backendSerivceompl.alterApp(id, status);
+		if (bool) {
+			return "redirect:/manager/backend/app/list";
+		}
+		return "check";
+	}
 }
