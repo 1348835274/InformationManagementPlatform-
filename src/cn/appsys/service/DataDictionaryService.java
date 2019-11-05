@@ -25,6 +25,9 @@ public interface DataDictionaryService {
 	public int select(String softwareNamex, String status, String flatformId, String categoryLevel1,
 			String categoryLevel2, String categoryLevel3);
 
+	// 按条件查询信息
+	public AppInfo selectId(AppInfo appInfo);
+
 	// 分页并且模糊查询信息
 	public List<AppInfo> selectAll(String softwareNamex, String status, String flatformId, String categoryLevel1,
 			String categoryLevel2, String categoryLevel3, int index, int currentPageNo);

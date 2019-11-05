@@ -27,7 +27,10 @@ public interface DataDictionaryMapper {
 	public int select(@Param("softwareName") String softwareNamex, @Param("status") String status,
 			@Param("flatformId") String flatformId, @Param("categoryLevel1") String categoryLevel1,
 			@Param("categoryLevel2") String categoryLevel2, @Param("categoryLevel3") String categoryLevel3);
-	
+
+	// 按条件查询信息
+	public AppInfo selectId(AppInfo appInfo);
+
 	// 分页并且模糊查询信息
 	public List<AppInfo> selectAll(@Param("softwareName") String softwareNamex, @Param("status") String status,
 			@Param("flatformId") String flatformId, @Param("categoryLevel1") String categoryLevel1,

@@ -67,17 +67,14 @@ public class DevController {
 	}
 
 	// 显示级别菜单
-	@RequestMapping(value = "fy", method = RequestMethod.GET, produces = { "application/json;charset=UTF-8" })
+	@RequestMapping(value = "fy", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
 	@ResponseBody
 	public Object view(@RequestParam(value = "pid") String pid) {
 		String count = "";
 		List<AppCategory> list = null;
 		try {
-			if (null == pid) {
-				list = dataDictionaryServiceimpl.appCate23(pid);
-			} else {
-				list = dataDictionaryServiceimpl.appCate1();
-			}
+			System.err.println(pid);
+			list = dataDictionaryServiceimpl.appCate23(pid);
 			count = JSON.toJSONString(list);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -85,11 +82,30 @@ public class DevController {
 		return count;
 	}
 
+	// 展示所属平台
+	@RequestMapping(value = "data", method = RequestMethod.GET, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+	public String datadictionarylists() {
+		String count1 = "";
+		List<DataDictionary> flatFormList = null;
+		try {
+			flatFormList = dataDictionaryServiceimpl.appWhat();
+			count1 = JSON.toJSONString(flatFormList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.err.println(count1);
+		return count1;
+	}
+
 	// 进入修改基本信息页面
 	@RequestMapping(value = "appinfomodify", method = RequestMethod.GET)
-	public String appinfomodifys() {
-		//展示数据
-		
+	public String appinfomodifys(@RequestParam(value = "id", required = false) String id, Model model) {
+		// 展示数据
+		AppInfo appInfo = new AppInfo();
+		appInfo.setId(Integer.valueOf(id));
+		AppInfo appInfo1 = dataDictionaryServiceimpl.selectId(appInfo);
+		model.addAttribute("appInfo", appInfo1);
 		return "developer/appinfomodify";
 	}
 }

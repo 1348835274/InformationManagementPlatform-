@@ -39,17 +39,23 @@ public class DataDictionaryServiceimpl implements DataDictionaryService {
 	@Override
 	public List<AppInfo> selectAll(String softwareNamex, String status, String flatformId, String categoryLevel1,
 			String categoryLevel2, String categoryLevel3, int index, int currentPageNo) {
-		
-		return dataDictionaryMapper.selectAll(softwareNamex, status, flatformId, categoryLevel1, categoryLevel2, categoryLevel3, index, currentPageNo);
+
+		return dataDictionaryMapper.selectAll(softwareNamex, status, flatformId, categoryLevel1, categoryLevel2,
+				categoryLevel3, index, currentPageNo);
 	}
 
 	@Override
 	public int select(String softwareNamex, String status, String flatformId, String categoryLevel1,
 			String categoryLevel2, String categoryLevel3) {
-	
-		return dataDictionaryMapper.select(softwareNamex, status, flatformId, categoryLevel1, categoryLevel2, categoryLevel3);
+
+		return dataDictionaryMapper.select(softwareNamex, status, flatformId, categoryLevel1, categoryLevel2,
+				categoryLevel3);
 	}
 
-	
+	@Override
+	public AppInfo selectId(AppInfo appInfo) {
+
+		return dataDictionaryMapper.selectId(appInfo);
+	}
 
 }

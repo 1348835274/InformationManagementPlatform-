@@ -27,7 +27,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!-- 查询二三级目录 -->
 	<select id="appCate23" resultType="AppCategory">
 		SELECT * FROM app_category
-		WHERE parentId = #{pid}
+		<where>
+			<choose>
+				<when test="pid!=null and pid!=''">parentId = #{pid}</when>
+				<otherwise>parentId is null</otherwise>
+			</choose>
+		</where>
 	</select>
 	<!-- 映射文件 -->
 	<resultMap type="appInfo" id="appInfoList">
@@ -71,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		versionNo from app_version where
 		appId=a.id ORDER BY
 		modifyDate DESC
-		LIMIT 1,1) as versionNo
+		LIMIT 0,1) as versionNo
 		from app_info
 		a
 		<where>
@@ -84,7 +89,48 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="categoryLevel3 !=null and categoryLevel3!=''">and a.categoryLevel3=#{categoryLevel3}</if>
 		</where>
 		<if test="index>=0">LIMIT #{index},#{currentPageNo}</if>
+	</select>
 
+	<!-- 按id查询信息 -->
+	<select id="selectId" resultMap="appInfoList">
+		select a.*,
+		(select
+		valueName from
+		data_dictionary where
+		typeCode='APP_FLATFORM' and
+		valueId=a.flatformId) as valueName,
+		(select
+		categoryName from
+		app_category where
+		id=a.categoryLevel1) as
+		categoryName1,
+		(select
+		categoryName from app_category
+		where
+		id=a.categoryLevel2) as
+		categoryName2,
+		(select categoryName from
+		app_category
+		where
+		id=a.categoryLevel3) as categoryName3,
+		(select
+		valueName from
+		data_dictionary where
+		typeCode='APP_STATUS' and
+		valueId=a.`status`) as
+		valueName1,
+		(select
+		versionNo from app_version
+		where
+		appId=a.id ORDER BY
+		modifyDate DESC
+		LIMIT 0,1) as versionNo
+		from
+		app_info
+		a
+		<where>
+			<if test="id!=null and id!=''">id=#{id}</if>
+		</where>
 	</select>
 	<!-- 查询总数量 -->
 	<select id="select" resultType="int">
