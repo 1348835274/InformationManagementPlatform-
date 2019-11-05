@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<where>
 			<if test="softwareName !=null and softwareName!=''">and a.softwareName like CONCAT('%',#{softwareName},'%')
 			</if>
-			<if test="flatformId !=null and flatformId!=''">and a.flatform Id=#{flatformId}</if>
+			<if test="flatformId !=null and flatformId!=''">and a.flatformId=#{flatformId}</if>
 			<if test="categoryLevel1 !=null and categoryLevel1!=''">and a.categoryLevel1=#{categoryLevel1}</if>
 			<if test="categoryLevel2 !=null and categoryLevel2!=''">and a.categoryLevel2=#{categoryLevel2}</if>
 			<if test="categoryLevel3 !=null and categoryLevel3!=''">and a.categoryLevel3=#{categoryLevel3}</if>
@@ -43,10 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<!-- 映射文件 -->
 	<resultMap type="appInfo" id="appInfoList">
-		<result property="softwareName" column="softwareName" />
-		<result property="APKName" column="APKName" />
-		<result property="softwareSize" column="softwareSize" />
-		<result property="downloads" column="downloads" />
+		<id property="id" column="id" />
 		<result property="categoryLevel3Name" column="categoryName3" />
 		<result property="categoryLevel2Name" column="categoryName2" />
 		<result property="categoryLevel1Name" column="categoryName1" />
@@ -56,16 +53,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	<!-- 分页并且模糊查询信息 -->
 	<select id="selectAll" resultMap="appInfoList">
-		select
-		a.softwareName ,
-		a.APKName ,
-		a.softwareSize,
-		(select valueName from
-		data_dictionary where typeCode='APP_FLATFORM' and
+		select a.*,a.id as id, a.softwareName , a.APKName
+		,a.softwareSize,(select valueName from data_dictionary where
+		typeCode='APP_FLATFORM' and
 		valueId=a.flatformId) as valueName,
-		(select categoryName from
+		(select
+		categoryName from
 		app_category where
-		id=a.categoryLevel1) as categoryName1,
+		id=a.categoryLevel1) as
+		categoryName1,
 		(select
 		categoryName from app_category
 		where
@@ -75,17 +71,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		app_category
 		where
 		id=a.categoryLevel3) as categoryName3,
-		(select valueName from
+		(select
+		valueName from
 		data_dictionary where
 		typeCode='APP_STATUS' and
 		valueId=a.status) as
 		valueName1,
 		a.downloads ,
 		(select
-		versionNo from app_version where
+		versionNo from
+		app_version where
 		appId=a.id ORDER BY
 		modifyDate DESC
-		LIMIT 1,1) as versionNo
+		LIMIT 0,1) as
+		versionNo
 		from app_info
 		a
 		<where>
@@ -97,6 +96,64 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="categoryLevel3 !=null and categoryLevel3!=''">and a.categoryLevel3=#{categoryLevel3}</if>
 		</where>
 		<if test="index>=0">LIMIT #{index},#{currentPageNo}</if>
-
 	</select>
+
+
+	<!-- 查询详细用户 -->
+	<select id="selAppinfo" resultMap="appInfoList">
+		select a.*,a.id as id,
+		a.softwareName , a.APKName
+		,a.softwareSize,(select
+		valueName from
+		data_dictionary where
+		typeCode='APP_FLATFORM' and
+		valueId=a.flatformId)
+		as valueName,
+		(select
+		categoryName from
+		app_category where
+		id=a.categoryLevel1) as
+		categoryName1,
+		(select
+		categoryName from
+		app_category
+		where
+		id=a.categoryLevel2) as
+		categoryName2,
+		(select
+		categoryName from
+		app_category
+		where
+		id=a.categoryLevel3) as
+		categoryName3,
+		(select
+		valueName from
+		data_dictionary where
+		typeCode='APP_STATUS' and
+		valueId=a.status) as
+		valueName1,
+		a.downloads ,
+		(select
+		versionNo from
+		app_version where
+		appId=a.id ORDER BY
+		modifyDate
+		DESC
+		LIMIT 0,1) as
+		versionNo
+		from app_info
+		a where id = #{id}
+	</select>
+	<select id="alter" resultType="AppVersion">
+		SELECT * FROM app_version WHERE id
+		= #{id}
+	</select>
+
+	<!-- 修改审核状态 -->
+	<update id="alterApp">
+		UPDATE app_info SET status = #{status} WHERE id
+		=#{id}
+	</update>
+
+
 </mapper>
