@@ -1,11 +1,15 @@
 package cn.appsys.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +20,7 @@ import com.alibaba.fastjson.JSON;
 import cn.appsys.pojo.AppCategory;
 import cn.appsys.pojo.AppInfo;
 import cn.appsys.pojo.DataDictionary;
+import cn.appsys.pojo.DevUser;
 import cn.appsys.pojo.page;
 import cn.appsys.service.DataDictionaryServiceimpl;
 
@@ -67,13 +72,12 @@ public class DevController {
 	}
 
 	// 显示级别菜单
-	@RequestMapping(value = "fy", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "fy", method = RequestMethod.GET, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 	public Object view(@RequestParam(value = "pid") String pid) {
 		String count = "";
 		List<AppCategory> list = null;
 		try {
-			System.err.println(pid);
 			list = dataDictionaryServiceimpl.appCate23(pid);
 			count = JSON.toJSONString(list);
 		} catch (Exception e) {
@@ -94,7 +98,6 @@ public class DevController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.err.println(count1);
 		return count1;
 	}
 
@@ -107,5 +110,24 @@ public class DevController {
 		AppInfo appInfo1 = dataDictionaryServiceimpl.selectId(appInfo);
 		model.addAttribute("appInfo", appInfo1);
 		return "developer/appinfomodify";
+	}
+
+	// 保存修改信息
+	@RequestMapping(value = "appinfomodifysave", method = RequestMethod.POST)
+	public String appinfomodifysave(@ModelAttribute("appinfo") AppInfo appInfo, HttpSession session) {
+		appInfo.setUpdateDate(new Date());
+		int num = dataDictionaryServiceimpl.updateAll(appInfo);
+		if (num > 0) {
+			return "redirect:appinfolist";
+		} else {
+			return "redirect:appinfomodify";
+		}
+	}
+
+	// 查看详细信息
+	@RequestMapping(value = "appview/{id}", method = RequestMethod.GET)
+	public String viwe(@PathVariable String id) {
+		
+		return "appinfoview";
 	}
 }

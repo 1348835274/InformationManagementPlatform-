@@ -58,4 +58,16 @@ public class DataDictionaryServiceimpl implements DataDictionaryService {
 		return dataDictionaryMapper.selectId(appInfo);
 	}
 
+	@Override
+	public int updateAll(AppInfo appInfo) {
+
+		return dataDictionaryMapper.updateAll(appInfo);
+	}
+
+	@Override
+	public AppInfo selectId(String id) {
+
+		return dataDictionaryMapper.selectId(id);
+	}
+
 }

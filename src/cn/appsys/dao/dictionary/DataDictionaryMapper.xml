@@ -17,7 +17,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SELECT * FROM data_dictionary
 		where typeCode = 'APP_FLATFORM'
 	</select>
-
+	<!-- 查询信息 -->
+	<select id="selectId">
+		select * from app_info where id=#{id}
+	</select>
 	<!-- 查询的第一级目录 -->
 	<select id="appCate1" resultType="AppCategory">
 		SELECT * FROM app_category
@@ -145,4 +148,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="categoryLevel3 !=null and categoryLevel3!=''">and a.categoryLevel3=#{categoryLevel3}</if>
 		</where>
 	</select>
+
+	<!-- 修改 -->
+	<update id="updateAll" parameterType="appInfo">
+		update app_info set
+		softwareName=#{softwareName},APKName=#{APKName},supportROM=#{supportROM},interfaceLanguage=#{interfaceLanguage},softwareSize=#{softwareSize},updateDate=#{updateDate},downloads=#{downloads},flatformId=#{flatformId},categoryLevel1=#{categoryLevel1},categoryLevel2=#{categoryLevel2},categoryLevel3=#{categoryLevel3},appInfo=#{appInfo}
+		where id=#{id}
+	</update>
 </mapper>

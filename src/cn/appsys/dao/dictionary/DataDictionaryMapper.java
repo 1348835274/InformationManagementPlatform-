@@ -36,4 +36,10 @@ public interface DataDictionaryMapper {
 			@Param("flatformId") String flatformId, @Param("categoryLevel1") String categoryLevel1,
 			@Param("categoryLevel2") String categoryLevel2, @Param("categoryLevel3") String categoryLevel3,
 			@Param("index") int index, @Param("currentPageNo") int currentPageNo);
+
+	// 修改
+	public int updateAll(AppInfo appInfo);
+	
+	//按id查询详细信息
+	public AppInfo selectId(@Param("id")String id);
 }

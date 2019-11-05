@@ -31,4 +31,10 @@ public interface DataDictionaryService {
 	// 分页并且模糊查询信息
 	public List<AppInfo> selectAll(String softwareNamex, String status, String flatformId, String categoryLevel1,
 			String categoryLevel2, String categoryLevel3, int index, int currentPageNo);
+
+	// 修改
+	public int updateAll(AppInfo appInfo);
+
+	// 按id查询详细信息
+	public AppInfo selectId(@Param("id") String id);
 }
