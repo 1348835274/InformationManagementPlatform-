@@ -126,7 +126,7 @@ public class DevController {
 
 	// 查看详细信息
 	@RequestMapping(value = "appview/{id}", method = RequestMethod.GET)
-	public String viwe(@PathVariable String id) {
+	public String viwe(@PathVariable String id,Model model) {
 		
 		return "appinfoview";
 	}
