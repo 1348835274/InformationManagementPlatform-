@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 
 import cn.appsys.pojo.AppCategory;
 import cn.appsys.pojo.AppInfo;
+import cn.appsys.pojo.AppVersion;
 import cn.appsys.pojo.DataDictionary;
 import cn.appsys.pojo.DevUser;
 import cn.appsys.pojo.page;
@@ -126,8 +127,11 @@ public class DevController {
 
 	// 查看详细信息
 	@RequestMapping(value = "appview/{id}", method = RequestMethod.GET)
-	public String viwe(@PathVariable String id,Model model) {
-		
-		return "appinfoview";
+	public String viwe(@PathVariable String id, Model model) {
+		AppInfo appInfo = dataDictionaryServiceimpl.selectId1(id);
+		List<AppVersion> list = dataDictionaryServiceimpl.selectIds(id);
+		model.addAttribute("appInfo", appInfo);
+		model.addAttribute("appVersionList", list);
+		return "developer/appinfoview";
 	}
 }

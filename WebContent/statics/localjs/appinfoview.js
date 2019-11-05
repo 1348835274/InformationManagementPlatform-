@@ -1,5 +1,5 @@
 $("#back").on("click",function(){
-	window.location.href = "appinfolist";
+	window.location.href = "../appinfolist";
 });
 	
 	

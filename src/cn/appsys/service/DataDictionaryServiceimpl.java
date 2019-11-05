@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import cn.appsys.dao.dictionary.DataDictionaryMapper;
 import cn.appsys.pojo.AppCategory;
 import cn.appsys.pojo.AppInfo;
+import cn.appsys.pojo.AppVersion;
 import cn.appsys.pojo.DataDictionary;
 
 @Service
@@ -65,9 +66,15 @@ public class DataDictionaryServiceimpl implements DataDictionaryService {
 	}
 
 	@Override
-	public AppInfo selectId(String id) {
+	public AppInfo selectId1(String id) {
 
-		return dataDictionaryMapper.selectId(id);
+		return dataDictionaryMapper.selectId1(id);
+	}
+
+	@Override
+	public List<AppVersion> selectIds(String id) {
+		
+		return dataDictionaryMapper.selectIds(id);
 	}
 
 }

@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import cn.appsys.pojo.AppCategory;
 import cn.appsys.pojo.AppInfo;
+import cn.appsys.pojo.AppVersion;
 import cn.appsys.pojo.DataDictionary;
 
 public interface DataDictionaryService {
@@ -36,5 +37,8 @@ public interface DataDictionaryService {
 	public int updateAll(AppInfo appInfo);
 
 	// 按id查询详细信息
-	public AppInfo selectId(@Param("id") String id);
+	public AppInfo selectId1(@Param("id") String id);
+	
+	// 查询历史版本
+	public List<AppVersion> selectIds(@Param("id") String id);
 }

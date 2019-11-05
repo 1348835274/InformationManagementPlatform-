@@ -17,10 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SELECT * FROM data_dictionary
 		where typeCode = 'APP_FLATFORM'
 	</select>
-	<!-- 查询信息 -->
-	<select id="selectId">
-		select * from app_info where id=#{id}
-	</select>
+
 	<!-- 查询的第一级目录 -->
 	<select id="appCate1" resultType="AppCategory">
 		SELECT * FROM app_category
@@ -47,6 +44,43 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="statusName" column="valueName1" />
 		<result property="flatformName" column="valueName" />
 	</resultMap>
+
+	<!-- 查询信息 -->
+	<select id="selectId1" resultMap="appInfoList">
+		select a.id ,a.*,
+		a.softwareName ,
+		a.APKName ,
+		a.softwareSize,
+		(select
+		valueName from
+		data_dictionary where typeCode='APP_FLATFORM' and
+		valueId=a.flatformId) as valueName,
+		(select categoryName from
+		app_category where
+		id=a.categoryLevel1) as categoryName1,
+		(select
+		categoryName from app_category
+		where
+		id=a.categoryLevel2) as
+		categoryName2,
+		(select categoryName from
+		app_category
+		where
+		id=a.categoryLevel3) as categoryName3,
+		(select valueName from
+		data_dictionary where
+		typeCode='APP_STATUS' and
+		valueId=a.`status`) as
+		valueName1,
+		a.downloads ,
+		(select
+		versionNo from app_version where
+		appId=a.id ORDER BY
+		modifyDate DESC
+		LIMIT 0,1) as versionNo
+		from app_info
+		a where a.id=#{id}
+	</select>
 	<!-- 分页并且模糊查询信息 -->
 	<select id="selectAll" resultMap="appInfoList">
 		select a.id ,a.*,
@@ -155,4 +189,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		softwareName=#{softwareName},APKName=#{APKName},supportROM=#{supportROM},interfaceLanguage=#{interfaceLanguage},softwareSize=#{softwareSize},updateDate=#{updateDate},downloads=#{downloads},flatformId=#{flatformId},categoryLevel1=#{categoryLevel1},categoryLevel2=#{categoryLevel2},categoryLevel3=#{categoryLevel3},appInfo=#{appInfo}
 		where id=#{id}
 	</update>
+	<resultMap type="appVersion" id="appVersions">
+		<id property="id" column="id" />
+		<result property="appName" column="appName" />
+	</resultMap>
+	<!-- 查询历史版本 -->
+	<select id="selectIds" resultMap="appVersions">
+		select a.*,a.id as id ,
+		(select softwareName from app_info where
+		a.appId=id) as appName from
+		app_version as a where a.appId=#{id}
+	</select>
 </mapper>
