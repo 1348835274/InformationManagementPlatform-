@@ -40,10 +40,26 @@ public interface DataDictionaryMapper {
 
 	// 修改
 	public int updateAll(AppInfo appInfo);
-	
-	//按id查询详细信息
-	public AppInfo selectId1(@Param("id")String id);
-	
+
+	// 按id查询详细信息
+	public AppInfo selectId1(@Param("id") String id);
+
 	// 查询历史版本
 	public List<AppVersion> selectIds(@Param("id") String id);
+
+	// 删除版本信息
+	public int delete(@Param("id") String id);
+
+	// 删除app信息
+	public int delete1(@Param("id") String id);
+
+	// 修改版本信息
+	public int updateBB(AppVersion appVersion);
+	
+	//查询版本信息
+	public AppVersion selectBB(@Param("id")String id);
+	//按id查询状态
+	public String selectStatus(@Param("id")String id);
+	//商品上架下架
+	public int updateSp(@Param("status")String status);
 }

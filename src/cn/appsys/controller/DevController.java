@@ -1,19 +1,26 @@
 package cn.appsys.controller;
 
+import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
 
@@ -115,7 +122,45 @@ public class DevController {
 
 	// 保存修改信息
 	@RequestMapping(value = "appinfomodifysave", method = RequestMethod.POST)
-	public String appinfomodifysave(@ModelAttribute("appinfo") AppInfo appInfo, HttpSession session) {
+	public String appinfomodifysave(@ModelAttribute("appinfo") AppInfo appInfo,
+			@RequestParam(value = "attach", required = false) MultipartFile attach, HttpSession session,
+			HttpServletRequest request) {
+		String idPicPath = null;
+		String fileName = null;
+		// 判断文件是否为空
+		if (!attach.isEmpty()) {
+			String path = request.getSession().getServletContext()
+					.getRealPath("statics" + File.separator + "uploadfiles");
+			String oldFileName = attach.getOriginalFilename();// 原文件名
+			String prefix = FilenameUtils.getExtension(oldFileName);// 原文件后缀
+			int filesize = 5000000;
+			if (attach.getSize() > filesize) { // 上传文件大于500kb
+				request.setAttribute("fileUploadError", "上传文件不得超过500kb");
+				return "developer/appinfomodify";
+			} else if (prefix.equalsIgnoreCase("jpg") || prefix.equalsIgnoreCase("png")
+					|| prefix.equalsIgnoreCase("jpeg") || prefix.equalsIgnoreCase("pneg")) {// 上传图片格式不正确
+				fileName = System.currentTimeMillis() + "_Personal.jsp";
+				File file = new File(path, fileName);
+				if (!file.exists()) {
+					file.mkdirs();
+				}
+				// 保存
+				try {
+					attach.transferTo(file);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					request.setAttribute("fileUploadError", "上传失败!");
+					return "developer//appinfomodify";
+				}
+				idPicPath = path + File.separator + fileName;
+			} else {
+				request.setAttribute("fileUploadError", "上传图片格式不正确");
+				return "developer//appinfomodify";
+			}
+		}
+		appInfo.setLogoLocPath(idPicPath);
+		appInfo.setLogoPicPath(fileName);
 		appInfo.setUpdateDate(new Date());
 		int num = dataDictionaryServiceimpl.updateAll(appInfo);
 		if (num > 0) {
@@ -133,5 +178,120 @@ public class DevController {
 		model.addAttribute("appInfo", appInfo);
 		model.addAttribute("appVersionList", list);
 		return "developer/appinfoview";
+	}
+
+	// 删除
+	@RequestMapping(value = "delapp", method = RequestMethod.GET)
+	@ResponseBody
+	public String delete(@RequestParam(value = "id", required = false) String id) {
+		String count = "";
+		try {
+			if (dataDictionaryServiceimpl.selectIds(id).size() > 0) {
+				dataDictionaryServiceimpl.delete(id);
+			}
+			int i = dataDictionaryServiceimpl.delete1(id);
+			count = JSON.toJSONString(i);
+		} catch (Exception e) {
+			e.printStackTrace();
+			count = "-1";
+		}
+		return count;
+	}
+
+	// 进入添加版本页面
+	@RequestMapping(value = "appversionadd", method = RequestMethod.GET)
+	public String appversionadd(@RequestParam(value = "id", required = false) String id, Model model) {
+		List<AppVersion> list = dataDictionaryServiceimpl.selectIds(id);
+		model.addAttribute("appVersionList", list);
+		return "developer/appversionadd";
+	}
+
+	// 进入修改最新版本页面
+	@RequestMapping(value = "appversionmodify", method = RequestMethod.GET)
+	public String appversionmodify(@RequestParam(value = "vid", required = false) String vid,
+			@RequestParam(value = "aid", required = false) String aid, Model model) {
+		// 获取历史版本
+		List<AppVersion> list = dataDictionaryServiceimpl.selectIds(aid);
+		// 获取当前版本
+		AppVersion appVersion = dataDictionaryServiceimpl.selectBB(vid);
+		model.addAttribute("appVersionList", list);
+		model.addAttribute("appVersion", appVersion);
+		return "developer/appversionmodify";
+	}
+
+	// 保存修改的最新版本信息
+	@RequestMapping(value = "appversionmodifysave", method = RequestMethod.POST)
+	public String updateBB(@ModelAttribute("appVersion") AppVersion appVersion, HttpSession session,
+			@RequestParam(value = "attach", required = false) MultipartFile attach, HttpServletRequest request) {
+		String idPicPath = null;
+		String fileName = null;
+		String xzPath = null;
+		// 判断文件是否为空
+		if (!attach.isEmpty()) {
+			String path = request.getSession().getServletContext()
+					.getRealPath("statics" + File.separator + "uploadfiles");
+			String oldFileName = attach.getOriginalFilename();// 原文件名
+			String prefix = FilenameUtils.getExtension(oldFileName);// 原文件后缀
+			int filesize = 5000000;
+			if (attach.getSize() > filesize) { // 上传文件大于500kb
+				request.setAttribute("fileUploadError", "上传文件不得超过500kb");
+				return "developer/appinfomodify";
+			} else if (prefix.equalsIgnoreCase("jpg") || prefix.equalsIgnoreCase("png")
+					|| prefix.equalsIgnoreCase("jpeg") || prefix.equalsIgnoreCase("pneg")) {// 上传图片格式不正确
+				fileName = System.currentTimeMillis() + "_Personal.jsp";
+				File file = new File(path, fileName);
+				if (!file.exists()) {
+					file.mkdirs();
+				}
+				// 保存
+				try {
+					attach.transferTo(file);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					request.setAttribute("fileUploadError", "上传失败!");
+					return "developer//appinfomodify";
+				}
+				idPicPath = path + File.separator + fileName;
+				xzPath = File.separator + fileName;
+			} else {
+				request.setAttribute("fileUploadError", "上传图片格式不正确");
+				return "developer//appinfomodify";
+			}
+		}
+		appVersion.setModifyBy(((DevUser) session.getAttribute("devUserSession")).getId());
+		appVersion.setModifyDate(new Date());
+		if (null != fileName) {
+			appVersion.setApkFileName(fileName);
+			appVersion.setApkLocPath(idPicPath);
+			appVersion.setDownloadLink(xzPath);
+		}
+		int num = dataDictionaryServiceimpl.updateBB(appVersion);
+		if (num > 0) {
+			return "redirect:appinfolist";
+		} else {
+			return "redirect:appversionmodifysave";
+		}
+	}
+
+	// 删除图片
+	@RequestMapping(value = "delfile.json", method = RequestMethod.GET)
+	@ResponseBody
+	public String deleteTP() {
+		return JSON.toJSONString("success");
+	}
+
+	// 商品上下架
+	@RequestMapping(value = "/sale.json")
+	@ResponseBody
+	public String sj(@RequestParam(value = "id") String id) {
+		String status = dataDictionaryServiceimpl.selectStatus(id);
+		int num = dataDictionaryServiceimpl.updateSp(status);
+		Map<String, String> map = new HashMap<String, String>();
+		if (num > 0) {
+			map.put("errorCode", "0");
+			map.put("resultMsg", "success");
+		}
+		return JSON.toJSONString(map);
 	}
 }

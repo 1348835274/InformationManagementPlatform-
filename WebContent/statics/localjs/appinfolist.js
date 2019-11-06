@@ -76,6 +76,7 @@ $(".modifyVersion").on(
 		function() {
 			var obj = $(this);
 			var status = obj.attr("status");
+			
 			var versionid = obj.attr("versionid");
 			var appinfoid = obj.attr("appinfoid");
 			if (status == "1" || status == "3") {// 待审核、审核未通过状态下才可以进行修改操作
@@ -91,7 +92,7 @@ $(".modifyVersion").on(
 			}
 		});
 
-//修改基本信息
+// 修改基本信息
 $(".modifyAppInfo").on("click", function() {
 	var obj = $(this);
 	var status = obj.attr("status");
@@ -119,7 +120,8 @@ var saleSwitchAjax = function(appId, obj) {
 	$
 			.ajax({
 				type : "PUT",
-				url : appId + "/sale.json",
+				url : "/sale.json",
+				data:"id"+appId,
 				dataType : "json",
 				success : function(data) {
 					/*
@@ -207,19 +209,19 @@ $(".deleteApp").on(
 					+ "】及其所有的版本吗？")) {
 				$.ajax({
 					type : "GET",
-					url : "delapp.json",
+					url : "delapp",
 					data : {
 						id : obj.attr("appinfoid")
 					},
 					dataType : "json",
 					success : function(data) {
-						if (data.delResult == "true") {// 删除成功：移除删除行
+						if (data == "1") {// 删除成功：移除删除行
 							alert("删除成功");
 							obj.parents("tr").remove();
-						} else if (data.delResult == "false") {// 删除失败
+						} else if (data == "0") {// 删除失败
 							alert("对不起，删除AAP应用【" + obj.attr("appsoftwarename")
 									+ "】失败");
-						} else if (data.delResult == "notexist") {
+						} else if (data == "-1") {
 							alert("对不起，APP应用【" + obj.attr("appsoftwarename")
 									+ "】不存在");
 						}

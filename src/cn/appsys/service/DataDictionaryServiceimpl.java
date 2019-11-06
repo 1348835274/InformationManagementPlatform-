@@ -73,8 +73,44 @@ public class DataDictionaryServiceimpl implements DataDictionaryService {
 
 	@Override
 	public List<AppVersion> selectIds(String id) {
-		
+
 		return dataDictionaryMapper.selectIds(id);
+	}
+
+	@Override
+	public int delete(String id) {
+
+		return dataDictionaryMapper.delete(id);
+	}
+
+	@Override
+	public int delete1(String id) {
+
+		return dataDictionaryMapper.delete1(id);
+	}
+
+	@Override
+	public int updateBB(AppVersion appVersion) {
+
+		return dataDictionaryMapper.updateBB(appVersion);
+	}
+
+	@Override
+	public AppVersion selectBB(String id) {
+
+		return dataDictionaryMapper.selectBB(id);
+	}
+
+	@Override
+	public String selectStatus(String id) {
+
+		return dataDictionaryMapper.selectStatus(id);
+	}
+
+	@Override
+	public int updateSp(String status) {
+
+		return dataDictionaryMapper.updateSp(status);
 	}
 
 }

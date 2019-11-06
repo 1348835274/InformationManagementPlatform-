@@ -10,7 +10,7 @@
              <div class="clearfix"></div>
       </div>
       <div class="x_content">
-        <form class="form-horizontal form-label-left" action="appinfomodifysave" method="post" >
+        <form class="form-horizontal form-label-left" action="appinfomodifysave" method="post" enctype="multipart/form-data" >
           <input type="hidden" name="id" id="id" value="${appInfo.id}">
           <div class="item form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">软件名称 <span class="required">*</span>
@@ -127,7 +127,7 @@
 				<p><span style="color:red;font-weight: bold;">*注：1、大小不得超过500k.2、图片格式：jpg、png、jpeg、pneg</span></p>
 				</div>
 				<div id="logoFile"></div>
-				${fileUploadError }
+				${fileUploadError}
             </div>
           </div>
           <div class="form-group">
