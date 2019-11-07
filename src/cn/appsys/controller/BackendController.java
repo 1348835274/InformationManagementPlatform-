@@ -53,7 +53,6 @@ public class BackendController {
 	public String dologin(Model model, @RequestParam(value = "userCode") String userCode,
 			@RequestParam(value = "userPassword") String userPassword, HttpSession session) {
 		BackendUser user = backendSerivceompl.sel_backend(userCode, userPassword);
-		System.err.println("账户是" + user + "       密码是" + userPassword + "角色名称是" + user.getUserTypeName());
 		if (user != null) {
 			session.setAttribute("userSession", user); // 传入会话
 			return "backend/main"; // 跳转的主页
@@ -83,6 +82,16 @@ public class BackendController {
 		if (session != null) {
 			session.removeAttribute("userSession");
 			return "backendlogin";
+		}
+		return "backend/main";
+	}
+
+	// 注销
+	@RequestMapping(value = "dev/logout", method = RequestMethod.GET)
+	public String logout1(HttpSession session) {
+		if (session != null) {
+			session.removeAttribute("dev/logout");
+			return "devlogin";
 		}
 		return "backend/main";
 	}

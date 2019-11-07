@@ -55,8 +55,20 @@ public interface DataDictionaryService {
 	public AppVersion selectBB(String id);
 
 	// 按id查询状态
-	public String selectStatus(@Param("id") String id);
+	public String selectStatus(String id);
 
 	// 商品上架下架
-	public int updateSp(@Param("status") String status);
+	public int updateSp(String status, String id);
+
+	// 添加版本
+	public int insertVersion(AppVersion appVersion);
+
+	// 修改最新版本id
+	public int updateVersionId(Integer id, Integer versionId);
+
+	// 查询最新版本号
+	public int bb(Integer appId);
+
+	// 新增App信息
+	public int addAppinfo(AppInfo appinfo);
 }

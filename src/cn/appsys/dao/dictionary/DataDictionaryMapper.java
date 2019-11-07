@@ -55,11 +55,25 @@ public interface DataDictionaryMapper {
 
 	// 修改版本信息
 	public int updateBB(AppVersion appVersion);
+
+	// 查询版本信息
+	public AppVersion selectBB(@Param("id") String id);
+
+	// 按id查询状态
+	public String selectStatus(@Param("id") String id);
+
+	// 商品上架下架
+	public int updateSp(@Param("status") String status, @Param("id") String id);
+
+	// 添加版本
+	public int insertVersion(AppVersion appVersion);
+
+	// 修改最新版本id
+	public int updateVersionId(@Param("id") Integer id,@Param("versionId")Integer versionId);
 	
-	//查询版本信息
-	public AppVersion selectBB(@Param("id")String id);
-	//按id查询状态
-	public String selectStatus(@Param("id")String id);
-	//商品上架下架
-	public int updateSp(@Param("status")String status);
+	//查询最新版本号
+	public int bb(@Param("appId")Integer appId);
+	
+	//新增App信息
+	public int addAppinfo(AppInfo appinfo);
 }

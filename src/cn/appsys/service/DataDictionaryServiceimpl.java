@@ -108,9 +108,33 @@ public class DataDictionaryServiceimpl implements DataDictionaryService {
 	}
 
 	@Override
-	public int updateSp(String status) {
+	public int updateSp(String status, String id) {
 
-		return dataDictionaryMapper.updateSp(status);
+		return dataDictionaryMapper.updateSp(status, id);
+	}
+
+	@Override
+	public int insertVersion(AppVersion appVersion) {
+
+		return dataDictionaryMapper.insertVersion(appVersion);
+	}
+
+	@Override
+	public int updateVersionId(Integer id, Integer versionId) {
+
+		return dataDictionaryMapper.updateVersionId(id, versionId);
+	}
+
+	@Override
+	public int bb(Integer appId) {
+
+		return dataDictionaryMapper.bb(appId);
+	}
+
+	@Override
+	public int addAppinfo(AppInfo appinfo) {
+		
+		return dataDictionaryMapper.addAppinfo(appinfo);
 	}
 
 }

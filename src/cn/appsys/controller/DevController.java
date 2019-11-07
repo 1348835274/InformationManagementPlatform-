@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -203,7 +202,74 @@ public class DevController {
 	public String appversionadd(@RequestParam(value = "id", required = false) String id, Model model) {
 		List<AppVersion> list = dataDictionaryServiceimpl.selectIds(id);
 		model.addAttribute("appVersionList", list);
+		model.addAttribute("appId", id);
 		return "developer/appversionadd";
+	}
+
+	// 保存添加信息
+	@RequestMapping(value = "addversionsave", method = RequestMethod.POST)
+	public String addversionsave(@ModelAttribute("appVersion") AppVersion appVersion, HttpSession session,
+			@RequestParam(value = "a_downloadLink", required = false) MultipartFile attach,
+			HttpServletRequest request) {
+		String idPicPath = null;
+		String fileName = null;
+		String xzPath = null;
+		// 判断文件是否为空
+		if (!attach.isEmpty()) {
+			String path = request.getSession().getServletContext()
+					.getRealPath("statics" + File.separator + "uploadfiles");
+			String oldFileName = attach.getOriginalFilename();// 原文件名
+			String prefix = FilenameUtils.getExtension(oldFileName);// 原文件后缀
+			int filesize = 5000000;
+			if (attach.getSize() > filesize) { // 上传文件大于500kb
+				request.setAttribute("fileUploadError", "上传文件不得超过500kb");
+				return "developer/appversionadd";
+			} else if (prefix.equalsIgnoreCase("jpg") || prefix.equalsIgnoreCase("png")
+					|| prefix.equalsIgnoreCase("jpeg") || prefix.equalsIgnoreCase("pneg")) {// 上传图片格式不正确
+				fileName = System.currentTimeMillis() + "_Personal.jsp";
+				File file = new File(path, fileName);
+				if (!file.exists()) {
+					file.mkdirs();
+				}
+				// 保存
+				try {
+					attach.transferTo(file);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					request.setAttribute("fileUploadError", "上传失败!");
+					return "developer/appversionadd";
+				}
+				idPicPath = path + File.separator + fileName;
+				xzPath = File.separator + fileName;
+			} else {
+				request.setAttribute("fileUploadError", "上传图片格式不正确");
+				return "developer/appversionadd";
+			}
+		}
+		if (null != fileName) {
+			appVersion.setApkFileName(fileName);
+			appVersion.setApkLocPath(idPicPath);
+			appVersion.setDownloadLink(xzPath);
+		}
+		int ids = 1;
+		System.err.println(ids);
+		appVersion.setCreatedBy(ids);
+		appVersion.setCreationDate(new Date());
+		// 添加版本
+		int num = dataDictionaryServiceimpl.insertVersion(appVersion);
+		int num2 = dataDictionaryServiceimpl.bb(appVersion.getAppId());
+		if (num > 0) {// 判断是否添加成功
+			int num1 = dataDictionaryServiceimpl.updateVersionId(appVersion.getAppId(), num2);
+			if (num1 > 0) {
+				return "redirect:appinfolist";
+			} else {
+				return "redirect:appversionadd";
+			}
+		} else {
+			return "redirect:appversionadd";
+		}
+
 	}
 
 	// 进入修改最新版本页面
@@ -250,16 +316,16 @@ public class DevController {
 				} catch (Exception e) {
 					e.printStackTrace();
 					request.setAttribute("fileUploadError", "上传失败!");
-					return "developer//appinfomodify";
+					return "developer/appinfomodify";
 				}
 				idPicPath = path + File.separator + fileName;
 				xzPath = File.separator + fileName;
 			} else {
 				request.setAttribute("fileUploadError", "上传图片格式不正确");
-				return "developer//appinfomodify";
+				return "developer/appinfomodify";
 			}
 		}
-		appVersion.setModifyBy(((DevUser) session.getAttribute("devUserSession")).getId());
+		appVersion.setModifyBy(1);
 		appVersion.setModifyDate(new Date());
 		if (null != fileName) {
 			appVersion.setApkFileName(fileName);
@@ -282,16 +348,77 @@ public class DevController {
 	}
 
 	// 商品上下架
-	@RequestMapping(value = "/sale.json")
+	@RequestMapping(value = "sale.json", method = RequestMethod.GET, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 	public String sj(@RequestParam(value = "id") String id) {
+		System.err.println(id);
 		String status = dataDictionaryServiceimpl.selectStatus(id);
-		int num = dataDictionaryServiceimpl.updateSp(status);
+		System.err.println(status);
+		int num = dataDictionaryServiceimpl.updateSp(status, id);
 		Map<String, String> map = new HashMap<String, String>();
 		if (num > 0) {
 			map.put("errorCode", "0");
 			map.put("resultMsg", "success");
 		}
 		return JSON.toJSONString(map);
+	}
+
+	// 跳转新增APP基础信息
+	@RequestMapping(value = "/appinfoadd")
+	public String appinfoadd() {
+		return "developer/appinfoadd";
+	}
+
+	// 新增APP基础信息
+	@RequestMapping(value = "/appinfoaddsave")
+	public String appinfoaddsave(@ModelAttribute("appinfo") AppInfo appinfo, Model model, HttpSession session,
+			@RequestParam(value = "a_logoPicPath", required = false) MultipartFile attach, HttpServletRequest request) {
+		String idPicPath = null;
+		String fileName = null;
+		String xzPath = null;
+		// 判断文件是否为空
+		if (!attach.isEmpty()) {
+			String path = request.getSession().getServletContext()
+					.getRealPath("statics" + File.separator + "uploadfiles");
+			String oldFileName = attach.getOriginalFilename();// 原文件名
+			String prefix = FilenameUtils.getExtension(oldFileName);// 原文件后缀
+			int filesize = 5000000;
+			if (attach.getSize() > filesize) { // 上传文件大于500kb
+				request.setAttribute("fileUploadError", "上传文件不得超过500kb");
+				return "developer/appinfomodify";
+			} else if (prefix.equalsIgnoreCase("jpg") || prefix.equalsIgnoreCase("png")
+					|| prefix.equalsIgnoreCase("jpeg") || prefix.equalsIgnoreCase("pneg")) {// 上传图片格式不正确
+				fileName = System.currentTimeMillis() + "_Personal.jsp";
+				File file = new File(path, fileName);
+				if (!file.exists()) {
+					file.mkdirs();
+				}
+				// 保存
+				try {
+					attach.transferTo(file);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					request.setAttribute("fileUploadError", "上传失败!");
+					return "developer/appinfomodify";
+				}
+				idPicPath = path + File.separator + fileName;
+				xzPath = File.separator + fileName;
+			} else {
+				request.setAttribute("fileUploadError", "上传图片格式不正确");
+				return "developer/appinfomodify";
+			}
+		}
+		appinfo.setAPKName(xzPath);
+		appinfo.setLogoLocPath(idPicPath);
+		appinfo.setLogoPicPath(fileName);
+		appinfo.setDevId(1);
+		appinfo.setCreationDate(new Date());
+		appinfo.setCreatedBy(1);
+		int count = dataDictionaryServiceimpl.addAppinfo(appinfo);
+		if (count > 0) {
+			return "redirect:appinfolist";
+		}
+		return "/dev/appinfoadd";
 	}
 }

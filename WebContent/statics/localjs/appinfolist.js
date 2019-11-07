@@ -76,7 +76,7 @@ $(".modifyVersion").on(
 		function() {
 			var obj = $(this);
 			var status = obj.attr("status");
-			
+
 			var versionid = obj.attr("versionid");
 			var appinfoid = obj.attr("appinfoid");
 			if (status == "1" || status == "3") {// 待审核、审核未通过状态下才可以进行修改操作
@@ -119,9 +119,11 @@ $(document).on("click", ".saleSwichOpen,.saleSwichClose", function() {
 var saleSwitchAjax = function(appId, obj) {
 	$
 			.ajax({
-				type : "PUT",
-				url : "/sale.json",
-				data:"id"+appId,
+				type : "GET",
+				url : "sale.json",
+				data : {
+					id : appId
+				},
 				dataType : "json",
 				success : function(data) {
 					/*
