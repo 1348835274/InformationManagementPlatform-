@@ -76,22 +76,22 @@ public class BackendController {
 		}
 	}
 
-	// 注销
-	@RequestMapping(value = "/manager/logout", method = RequestMethod.GET)
-	public String logout(HttpSession session) {
+	// 注销后台
+	@RequestMapping(value = "/manager/logout")
+	public String zx(HttpSession session) {
 		if (session != null) {
 			session.removeAttribute("userSession");
-			return "backendlogin";
+			return "../index";
 		}
-		return "backend/main";
+		return "";
 	}
 
 	// 注销
-	@RequestMapping(value = "dev/logout", method = RequestMethod.GET)
+	@RequestMapping(value = "dev/logout")
 	public String logout1(HttpSession session) {
 		if (session != null) {
-			session.removeAttribute("dev/logout");
-			return "devlogin";
+			session.removeAttribute("devUserSession");
+			return "../index";
 		}
 		return "backend/main";
 	}

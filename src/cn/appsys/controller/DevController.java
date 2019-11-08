@@ -137,7 +137,7 @@ public class DevController {
 				request.setAttribute("fileUploadError", "上传文件不得超过500kb");
 				return "developer/appinfomodify";
 			} else if (prefix.equalsIgnoreCase("jpg") || prefix.equalsIgnoreCase("png")
-					|| prefix.equalsIgnoreCase("jpeg") || prefix.equalsIgnoreCase("pneg")) {// 上传图片格式不正确
+					|| prefix.equalsIgnoreCase("apk") || prefix.equalsIgnoreCase("pneg")) {// 上传图片格式不正确
 				fileName = System.currentTimeMillis() + "_Personal.jsp";
 				File file = new File(path, fileName);
 				if (!file.exists()) {
